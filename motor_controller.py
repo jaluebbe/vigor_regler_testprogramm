@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import time
 import json
 import redis
@@ -9,12 +10,6 @@ interval = 0.08
 redis_connection = redis.Redis(decode_responses=True)
 pubsub = redis_connection.pubsub()
 pubsub.subscribe("client_feedback")
-
-
-def set_rates(left_rate, right_rate) -> None:
-    _left = int(float(left_rate) * 100)
-    _right = int(float(right_rate) * 100)
-    MotorAPI.set_ref(_left, _right)
 
 
 while True:
@@ -31,8 +26,10 @@ while True:
     _message = pubsub.get_message()
     if _message and _message["type"] == "message" and _state == "Automatik":
         data = json.loads(_message["data"])
-        set_rates(left_rate=data["left_rate"], right_rate=data["right_rate"])
+        MotorAPI.set_ref(
+            int(float(data["left_rate"]) * 100),
+            int(float(data["right_rate"]) * 100),
+        )
 
     dt = time.time() - _timestamp
     time.sleep(max(0, interval - dt))
-  
