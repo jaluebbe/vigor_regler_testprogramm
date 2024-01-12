@@ -1,0 +1,12 @@
+[Unit]
+Description=motor controller for vigor22
+After=redis-server.service
+
+[Service]
+Type=simple
+User=gpstracker
+Restart=on-failure
+ExecStart=/home/gpstracker/GPSTracker/gps_tracker/motor_controller.py
+
+[Install]
+WantedBy=multi-user.target
